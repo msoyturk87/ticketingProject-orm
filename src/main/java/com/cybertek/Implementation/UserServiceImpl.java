@@ -1,4 +1,4 @@
-package com.cybertek.Implementation;
+package com.cybertek.implementation;
 
 import com.cybertek.dto.UserDTO;
 import com.cybertek.entity.User;
@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(UserDTO dto) {
-        User obj =  userMapper.convertToEntity(dto);
-        userRepository.save(obj);
+       User obj =  userMapper.convertToEntity(dto);
+       userRepository.save(obj);
     }
 
     @Override
@@ -68,5 +68,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUserName(String username) {
         userRepository.deleteByUserName(username);
+    }
+
+
+    @Override
+    public List<UserDTO> listAllByRole(String role) {
+        List<User> users = userRepository.findAllByRoleDescriptionIgnoreCase(role);
+        return users.stream().map(obj -> {return userMapper.convertToDto(obj);}).collect(Collectors.toList());
     }
 }
