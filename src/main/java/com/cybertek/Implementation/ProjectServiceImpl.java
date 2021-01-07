@@ -29,7 +29,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO getByProjectCode(String code) {
-        return null;
+
+        Project project = projectRepository.findByProjectCode(code);
+        return projectMapper.convertToDto(project);
     }
 
     @Override
@@ -44,19 +46,43 @@ public class ProjectServiceImpl implements ProjectService {
     public void save(ProjectDTO dto) {
         dto.setProjectStatus(Status.OPEN);
         Project obj = projectMapper.convertToEntity(dto);
-        obj.setAssignedManager(userMapper.convertToEntity(dto.getAssignedManager()));
+        // Don't need this
+        // obj.setAssignedManager(userMapper.convertToEntity(dto.getAssignedManager()));
 
         projectRepository.save(obj);
 
     }
 
     @Override
-    public ProjectDTO update(ProjectDTO dto) {
-        return null;
+    public void update(ProjectDTO dto) {
+
+        //Find current project
+        Project project = projectRepository.findByProjectCode(dto.getProjectCode());
+        //Map update project dto to entity object
+        Project convertedProject = projectMapper.convertToEntity(dto);
+        //set id to the converted object
+        convertedProject.setId(project.getId());
+        //set ProjectStatus to the converted object
+        convertedProject.setProjectStatus(project.getProjectStatus());
+
+        //save updated user
+        projectRepository.save(convertedProject);
+
+
     }
 
     @Override
     public void delete(String code) {
+        Project project = projectRepository.findByProjectCode(code);
+        project.setIsDeleted(true);
+        projectRepository.save(project);
 
+    }
+
+    @Override
+    public void complete(String projectCode) {
+        Project project = projectRepository.findByProjectCode(projectCode);
+        project.setProjectStatus(Status.COMPLETE);
+        projectRepository.save(project);
     }
 }
