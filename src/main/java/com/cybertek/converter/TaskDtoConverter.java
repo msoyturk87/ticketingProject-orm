@@ -12,13 +12,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationPropertiesBinding
-public class TaskDtoConverter implements Converter<Long, TaskDTO> {
+public class TaskDtoConverter implements Converter<String, TaskDTO> {
 
     @Autowired
     TaskService taskService;
 
     @Override
-    public TaskDTO convert(Long id) {
+    public TaskDTO convert(String source) {
+        Long id=Long.parseLong(source);
         return taskService.findById(id)   ;
     }
 }
