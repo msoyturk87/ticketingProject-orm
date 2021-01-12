@@ -47,16 +47,17 @@ public class ProjectController {
     @PostMapping("/create")
     public String insertProject(ProjectDTO project){
         projectService.save(project);
-        project.setProjectStatus(Status.OPEN);
         return "redirect:/project/create";
 
     }
 
     @GetMapping("/delete/{projectcode}")
     public String deleteProject(@PathVariable("projectcode") String projectcode){
+
         projectService.delete(projectcode);
         return "redirect:/project/create";
     }
+
 
     @GetMapping("/complete/{projectcode}")
     public String completeProject(@PathVariable("projectcode") String projectcode){
@@ -64,10 +65,11 @@ public class ProjectController {
         return "redirect:/project/create";
     }
 
+
     @GetMapping("/update/{projectcode}")
     public String editProject(@PathVariable("projectcode") String projectcode,Model model){
 
-       model.addAttribute("project",projectService.getByProjectCode(projectcode));
+        model.addAttribute("project",projectService.getByProjectCode(projectcode));
         model.addAttribute("projects",projectService.listAllProjects());
         model.addAttribute("managers",userService.listAllByRole("manager"));
 
@@ -75,46 +77,48 @@ public class ProjectController {
     }
 
     @PostMapping("/update/{projectcode}")
-    public String updateProject(@PathVariable("projectcode") String projectcode,ProjectDTO project,Model model){
+    public String updateProject(@PathVariable("projectcode") String projectcode,ProjectDTO project){
 
         projectService.update(project);
 
         return "redirect:/project/create";
     }
 
-//    @GetMapping("/manager/complete")
-//    public String getProjectByManager(Model model){
-//
-//        UserDTO manager = userService.findById("john@cybertek.com");
-//
-//        List<ProjectDTO> projects = getCountedListOfProjectDTO(manager);
-//
-//        model.addAttribute("projects",projects);
-//
-//
-//        return "/manager/project-status";
-//    }
-//
-//    List<ProjectDTO> getCountedListOfProjectDTO(UserDTO manager){
-//
-//        List<ProjectDTO> list = projectService
-//                .findAll()
-//                .stream()
-//                .filter(x -> x.getAssignedManager().equals(manager))
-//                .map(x -> {
-//
-//                    List<TaskDTO> taskList = taskService.findTaskByManager(manager);
-//                    int completeCount = (int) taskList.stream().filter(t -> t.getProject().equals(x) && t.getTaskStatus() == Status.COMPLETE).count();
-//                    int inCompleteCount = (int) taskList.stream().filter(t -> t.getProject().equals(x) && t.getTaskStatus() != Status.COMPLETE).count();
-//
-//                    x.setCompleteTaskCounts(completeCount);
-//                    x.setUnfinishedTaskCounts(inCompleteCount);
-//
-//                    return x;
-//
-//                }).collect(Collectors.toList());
-//
-//        return list;
 
+    @GetMapping("/manager/complete")
+    public String getProjectByManager(Model model){
+
+        List<ProjectDTO> projects = projectService.listAllProjectDetails();
+        model.addAttribute("projects",projects);
+
+        return "/manager/project-status";
     }
+
+    @GetMapping("/manager/complete/{projectCode}")
+    public String manager_completed(@PathVariable("projectCode") String projectCode,Model model){
+
+        projectService.complete(projectCode);
+
+        return "redirect:/project/manager/complete";
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
