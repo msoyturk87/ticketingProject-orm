@@ -13,6 +13,8 @@ public interface TaskService {
     List<TaskDTO> listAllTasks();
     Task save(TaskDTO dto);
     void update(TaskDTO dto);
+    void updateStatus(TaskDTO dto);
+
     void delete(long id);
 
     int totalNonCompletedTasks(String projectCode);
@@ -25,4 +27,7 @@ public interface TaskService {
     List<TaskDTO> listAllTasksByStatusIsNot(Status status);
 
     List<TaskDTO> listAllTasksByProjectManager();
+    List<TaskDTO> listAllTasksByStatus(Status status);
+
+
 }

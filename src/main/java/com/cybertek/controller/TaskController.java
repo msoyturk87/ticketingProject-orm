@@ -91,7 +91,7 @@ public class TaskController {
     public String employee_update(@PathVariable("id") Long id,Model model){
 
         TaskDTO task = taskService.findById(id);
-        List<TaskDTO> tasks = taskService.listAllTasksByProjectManager();
+        List<TaskDTO> tasks=taskService.listAllTasksByStatusIsNot(Status.COMPLETE);
 
         model.addAttribute("task",task);
         model.addAttribute("users",userService.listAllByRole("employee"));
@@ -101,10 +101,18 @@ public class TaskController {
 
         return "task/employee-update";
 
+    }
 
+    @PostMapping("/employee/update/{id}")
+    public String employee_update(@PathVariable("id") Long id, TaskDTO taskDTO){
+        taskService.updateStatus(taskDTO);
+        return "redirect:/task/employee";
+    }
 
-
-
+    @GetMapping("/employee/archive")
+    public String employee_archive(Model model){
+        List<TaskDTO> tasks=taskService.listAllTasksByStatus(Status.COMPLETE);
+        return "redirect:/task/archieve";
     }
 
 
