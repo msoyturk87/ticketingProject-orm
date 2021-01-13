@@ -73,6 +73,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public void updateStatus(TaskDTO dto) {
+        Optional<Task> task = taskRepository.findById(dto.getId());
+        if(task.isPresent()) {
+            task.get().setTaskStatus(dto.getTaskStatus());
+            taskRepository.save((task.get()));
+        }
+    }
+
+    @Override
     public void delete(long id) {
         Optional<Task> foundTask =  taskRepository.findById(id);
         if(foundTask.isPresent()){
@@ -119,6 +128,14 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDTO> listAllTasksByProjectManager() {
         User user = userRepository.findByUserName("java@cybertekschool.com");
         List<Task> tasks = taskRepository.findAllByProjectAssignedManager(user);
+        return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TaskDTO> listAllTasksByStatus(Status status) {
+
+        User user = userRepository.findByUserName("tom@ct.com");
+        List<Task> tasks=taskRepository.findAllByTaskStatusAndAssignedEmployee(status,user);
         return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
     }
 }
